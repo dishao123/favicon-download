@@ -20,9 +20,13 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:domain([a-z0-9-]+\\.[a-z]{2,})',
+        source: '/:domain((?:[a-z0-9-]+\\.)+[a-z]{2,})',
+        destination: '/favicon/:domain',
+      },
+      {
+        source: '/api/:domain((?:[a-z0-9-]+\\.)+[a-z]{2,})',
         destination: '/api/favicon/:domain',
-      }
+      },
     ]
   },
   images: {
