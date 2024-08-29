@@ -16,6 +16,15 @@ const nextConfig = {
   eslint: {
     dirs: ["src"],
   },
+  //  change the URL to example.com/proxysites.ai
+  async rewrites() {
+    return [
+      {
+        source: '/:domain([a-z0-9-]+\\.[a-z]{2,})',
+        destination: '/api/favicon/:domain',
+      }
+    ]
+  },
   images: {
     remotePatterns: [
       {
