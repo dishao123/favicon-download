@@ -1,5 +1,4 @@
 import { ResponseInfo } from "@/types";
-import { NextRequest } from "next/server";
 
 // Fetch favicons from a given URL and return ResponseInfo
 export const getFavicons = async ({ url, headers }: { url: string, headers?: Headers }): Promise<ResponseInfo> => {
@@ -47,8 +46,8 @@ export const getFavicons = async ({ url, headers }: { url: string, headers?: Hea
       statusText: response.statusText,
       icons
     };
-  } catch (error) {
-    console.error(`Error fetching favicons: ${error}`);
+  } catch (error: any) {
+    console.error(`Error fetching favicons: ${error.message}`);
     return {
       url: newUrl.href,
       host: newUrl.host,
@@ -60,7 +59,7 @@ export const getFavicons = async ({ url, headers }: { url: string, headers?: Hea
 };
 
 // Function to fetch favicon from alternative sources
-export const proxyFavicon = async ({ domain, request }: { domain: string; request: NextRequest }) => {
+export const proxyFavicon = async ({ domain }: { domain: string; }) => {
   // List of alternative sources to fetch favicons
   const sources = [
     `https://www.google.com/s2/favicons?domain=${domain}`,
@@ -75,21 +74,17 @@ export const proxyFavicon = async ({ domain, request }: { domain: string; reques
   for (const source of sources) {
     try {
       response = await fetch(source, {
-        method: request.method,
-        headers: request.headers,
         redirect: 'follow'
       });
-      if (response.status == 200) {
+      if (response.ok) {
+        console.log("icon source ok:", source);
         break;
       }
-
-      console.log("icon source:", source);
-
-    } catch (error) {
-      console.error(`Error fetching proxy favicon: ${error}`);
+    } catch (error: any) {
+      console.error(`Error fetching proxy favicon: ${error.message}`, source);
     }
   }
-  if (response.status !== 200) {
+  if (!response.ok) {
     const firstLetter = domain.charAt(0).toUpperCase();
     const svgContent = `
       <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
@@ -98,7 +93,7 @@ export const proxyFavicon = async ({ domain, request }: { domain: string; reques
       </svg>
     `;
     return new Response(svgContent, {
-      status: 200,
+      status: 404,
       headers: {
         'Cache-Control': 'public, max-age=86400',
         'Content-Type': 'image/svg+xml'
