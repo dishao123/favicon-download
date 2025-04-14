@@ -82,7 +82,7 @@ export function Main({
     setError(false); 
     setInfo(null); 
     setValues(values);
-    apiClient.get(`/favicon/${values.domain}`)
+    apiClient.get(`/${values.domain}`)
       .then((res) => { 
         setInfo(res as any);
         setFetching(false);
@@ -104,8 +104,8 @@ export function Main({
       const currentHost = window.location.host;
       const protocol = window.location.protocol; 
       setHost(currentHost); 
-      setImageDefaultUrl(`${protocol}//${currentHost}/favicon/${domain}`);
-      setImageLargerUrl(`${protocol}//${currentHost}/favicon/${domain}?larger=true`);
+      setImageDefaultUrl(`${protocol}//${currentHost}/${domain}`);
+      setImageLargerUrl(`${protocol}//${currentHost}/${domain}?larger=true`);
     }
   }, [domain]);
 
